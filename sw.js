@@ -1,0 +1,89 @@
+const CACHE='pv-cache-v1';
+const ASSETS=[
+  './',
+  './index.html',
+  './styles.css',
+  './app.js',
+  './offline.html',
+  './manifest.webmanifest',
+  './assets/icon-192.png',
+  './assets/icon-512.png',
+  './assets/logo.svg',
+  './assets/brand-sinteplast.svg',
+  './assets/brand-sherwin.svg',
+  './assets/brand-tersuave.svg',
+  './assets/brand-pattex.svg',
+  './assets/brand-3m.svg'
+,
+  "./assets/products/p1-1.png",
+  "./assets/products/p1-1.webp",
+  "./assets/products/p1-2.png",
+  "./assets/products/p1-2.webp",
+  "./assets/products/p1-3.png",
+  "./assets/products/p1-3.webp",
+  "./assets/products/p1.png",
+  "./assets/products/p2-1.png",
+  "./assets/products/p2-1.webp",
+  "./assets/products/p2-2.png",
+  "./assets/products/p2-2.webp",
+  "./assets/products/p2-3.png",
+  "./assets/products/p2-3.webp",
+  "./assets/products/p2.png",
+  "./assets/products/p3-1.png",
+  "./assets/products/p3-1.webp",
+  "./assets/products/p3-2.png",
+  "./assets/products/p3-2.webp",
+  "./assets/products/p3-3.png",
+  "./assets/products/p3-3.webp",
+  "./assets/products/p3.png",
+  "./assets/products/p4-1.png",
+  "./assets/products/p4-1.webp",
+  "./assets/products/p4-2.png",
+  "./assets/products/p4-2.webp",
+  "./assets/products/p4-3.png",
+  "./assets/products/p4-3.webp",
+  "./assets/products/p4.png",
+  "./assets/products/p5-1.png",
+  "./assets/products/p5-1.webp",
+  "./assets/products/p5-2.png",
+  "./assets/products/p5-2.webp",
+  "./assets/products/p5-3.png",
+  "./assets/products/p5-3.webp",
+  "./assets/products/p5.png",
+  "./assets/products/p6-1.png",
+  "./assets/products/p6-1.webp",
+  "./assets/products/p6-2.png",
+  "./assets/products/p6-2.webp",
+  "./assets/products/p6-3.png",
+  "./assets/products/p6-3.webp",
+  "./assets/products/p6.png",
+  "./assets/products/p7-1.png",
+  "./assets/products/p7-1.webp",
+  "./assets/products/p7-2.png",
+  "./assets/products/p7-2.webp",
+  "./assets/products/p7-3.png",
+  "./assets/products/p7-3.webp",
+  "./assets/products/p7.png",
+  "./assets/products/p8-1.png",
+  "./assets/products/p8-1.webp",
+  "./assets/products/p8-2.png",
+  "./assets/products/p8-2.webp",
+  "./assets/products/p8-3.png",
+  "./assets/products/p8-3.webp",
+  "./assets/products/p8.png"];
+self.addEventListener('install',e=>{
+  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));
+});
+self.addEventListener('activate',e=>{
+  e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+});
+self.addEventListener('fetch',e=>{
+  const req=e.request;
+  e.respondWith(
+    caches.match(req).then(res=> res || fetch(req).then(r=>{
+      const copy=r.clone();
+      caches.open(CACHE).then(c=>c.put(req,copy)).catch(()=>{});
+      return r;
+    }).catch(()=>caches.match('./offline.html')))
+  );
+});

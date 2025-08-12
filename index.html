@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pinturerías Vintage — Tienda Online</title>
+<meta name="description" content="Pinturas, impermeabilizantes y revestimientos. Envío rápido, retiro en sucursal y hasta 6 cuotas sin interés.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#ff4081">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="preconnect" href="https://sdk.mercadopago.com" />
+<script defer src="https://sdk.mercadopago.com/js/v2"></script>
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Pinturerías Vintage — Tienda Online">
+<meta property="og:description" content="Pinturas, impermeabilizantes y más. 6 cuotas sin interés.">
+<meta property="og:image" content="assets/icon-512.png">
+</head>
+<body>
+  <div class="promo">Envío GRATIS en AMBA desde $180.000 + hasta 6 cuotas sin interés</div>
+
+  <header>
+    <div class="topbar wrap">
+      <button class="icon-btn" id="openMenu" aria-label="Abrir menú">☰</button>
+      <a class="brand" href="#">
+        <img src="assets/logo.svg" alt="Pinturerías Vintage">
+        <strong>Pinturerías Vintage</strong>
+      </a>
+      <div class="search" role="search">
+        <span class="icon">🔎</span>
+        <input id="q" placeholder="Buscar productos, marcas y más…" aria-label="Buscar"/>
+        <div id="sugg" class="popover hidden" aria-live="polite"></div>
+      </div>
+      <div class="icons">
+        <button class="icon-btn" id="openCart" aria-label="Abrir carrito">🛒<span id="cartBadge" class="badge" style="display:none">0</span></button>
+        <button class="icon-btn" id="openLogin" aria-label="Mi cuenta">👤</button>
+      </div>
+    </div>
+    <div class="benefits">
+      <div class="benefit">🚚 Envío 24/48 h</div>
+      <div class="benefit">🏬 Retiro en 2 h</div>
+      <div class="benefit">💳 6 cuotas sin interés</div>
+    </div>
+    <nav class="nav" aria-label="Categorías">
+      <div class="wrap nav-row">
+        <div class="cats-row" id="catsRow"></div>
+        <div class="tag"><b>Hot</b> Mega Ofertas</div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-label="Destacados">
+      <div class="slides" id="slides">
+        <div class="slide s1">
+          <div class="content wrap">
+            <div>
+              <h1>Mega Semana Vintage</h1>
+              <p>Pinturas e impermeabilizantes con hasta <b>30% OFF</b> + <b>6 cuotas</b>.</p>
+              <button class="cta" onclick="scrollToProducts()">Ver ofertas</button>
+              <button class="cta alt" onclick="scrollToProducts()">Comprar ahora</button>
+            </div>
+            <div aria-hidden="true"><img src="assets/brand-sinteplast.svg" alt=""></div>
+          </div>
+        </div>
+        <div class="slide s2">
+          <div class="content wrap">
+            <div>
+              <h2>Protegé tu techo</h2>
+              <p>Impermeabilizantes Recuplast y membranas líquidas con envío en 24/48h.</p>
+              <button class="cta" onclick="filterByCategory('Impermeabilizantes')">Ver impermeabilizantes</button>
+            </div>
+            <div aria-hidden="true"><img src="assets/brand-sherwin.svg" alt=""></div>
+          </div>
+        </div>
+        <div class="slide s3">
+          <div class="content wrap">
+            <div>
+              <h2>Terminaciones premium</h2>
+              <p>Revestimientos y productos para madera con acabado profesional.</p>
+              <button class="cta" onclick="filterByCategory('Revestimientos')">Ver revestimientos</button>
+            </div>
+            <div aria-hidden="true"><img src="assets/brand-tersuave.svg" alt=""></div>
+          </div>
+        </div>
+      </div>
+      <div class="dots" id="dots" aria-label="Paginación del slider"></div>
+    </section>
+
+    <section class="brands" aria-label="Marcas">
+      <div class="rail wrap">
+        <img class="brand-logo" src="assets/brand-sinteplast.svg" alt="Sinteplast">
+        <img class="brand-logo" src="assets/brand-sherwin.svg" alt="Sherwin-Williams">
+        <img class="brand-logo" src="assets/brand-tersuave.svg" alt="Tersuave">
+        <img class="brand-logo" src="assets/brand-pattex.svg" alt="Pattex">
+        <img class="brand-logo" src="assets/brand-3m.svg" alt="3M">
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="controls">
+        <div class="left">
+          <span class="muted">Ordenar por</span>
+          <select id="sort" class="select" aria-label="Ordenar">
+            <option value="relevancia">Relevancia</option>
+            <option value="menor">Precio: menor a mayor</option>
+            <option value="mayor">Precio: mayor a menor</option>
+            <option value="descuento">Mayor descuento</option>
+          </select>
+          <span class="muted">Marca</span>
+          <select id="brandFilter" class="select" aria-label="Filtrar por marca">
+            <option value="">Todas</option>
+          </select>
+          <span class="muted">Precio</span>
+          <input type="range" id="priceRange" min="0" max="250000" step="5000">
+          <span id="priceLabel" class="muted"></span>
+        </div>
+        <div class="right">
+          <span id="resultsCount" class="muted">0 resultados</span>
+        </div>
+      </div>
+      <div class="grid" id="grid" aria-live="polite">
+        <div class="col"><div class="skeleton"></div></div>
+        <div class="col"><div class="skeleton"></div></div>
+        <div class="col"><div class="skeleton"></div></div>
+        <div class="col"><div class="skeleton"></div></div>
+      </div>
+    </section>
+
+    <section class="newsletter">
+      <div class="inner wrap">
+        <div>
+          <h3>10% OFF en tu primera compra</h3>
+          <p class="muted">Suscribite y recibí promos y lanzamientos. Podés desuscribirte cuando quieras.</p>
+        </div>
+        <div class="row">
+          <input class="input" id="nlEmail" placeholder="tu@email.com" type="email" />
+          <button class="btn" id="nlBtn">Suscribirme</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="foot wrap">
+      <div>
+        <h4>Pinturerías Vintage</h4>
+        <p class="muted">Expertos en pinturas y revestimientos. Atención profesional, envíos rápidos y cuotas sin interés.</p>
+        <div class="pay-rail">
+          <svg viewBox="0 0 48 32"><rect width="48" height="32" rx="6" fill="#fff"/><text x="8" y="21" font-size="12" fill="#111">VISA</text></svg>
+          <svg viewBox="0 0 48 32"><rect width="48" height="32" rx="6" fill="#fff"/><text x="5" y="21" font-size="12" fill="#111">MPago</text></svg>
+          <svg viewBox="0 0 48 32"><rect width="48" height="32" rx="6" fill="#fff"/><text x="6" y="21" font-size="12" fill="#111">Amex</text></svg>
+          <svg viewBox="0 0 48 32"><rect width="48" height="32" rx="6" fill="#fff"/><text x="7" y="21" font-size="12" fill="#111">Débito</text></svg>
+        </div>
+      </div>
+      <div>
+        <h4>Ayuda</h4>
+        <a href="#">Cómo comprar</a>
+        <a href="#">Envíos y retiros</a>
+        <a href="#">Cambios y devoluciones</a>
+        <a href="#">Medios de pago</a>
+      </div>
+      <div>
+        <h4>Categorías</h4>
+        <a href="#" data-cat="Látex">Látex</a>
+        <a href="#" data-cat="Impermeabilizantes">Impermeabilizantes</a>
+        <a href="#" data-cat="Membranas">Membranas</a>
+        <a href="#" data-cat="Revestimientos">Revestimientos</a>
+        <a href="#" data-cat="Madera">Madera</a>
+        <a href="#" data-cat="Piletas">Piletas</a>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <a href="mailto:hola@pintureriasvintage.com">hola@pintureriasvintage.com</a>
+        <a href="tel:+541100000000">+54 11 0000-0000</a>
+        <a href="#">Sucursales</a>
+        <a href="#">Términos y privacidad</a>
+      </div>
+    </div>
+    <div class="copy">© 2025 Pinturerías Vintage — Envíos a todo el país</div>
+  </footer>
+
+  <!-- MODALES -->
+  <div class="modal" id="productModal" aria-hidden="true" role="dialog" aria-label="Detalle de producto">
+    <div class="backdrop"></div>
+    <div class="sheet">
+      <button class="close-x" onclick="toggleModal(false)" aria-label="Cerrar">✕</button>
+      <div class="body">
+        <div class="media"><div class="main" id="m_main"></div><div class="thumbs" id="m_thumbs"></div></div>
+        <div>
+          <div class="brandline" id="m_brand"></div>
+          <h2 id="m_title" style="margin:.2rem 0"></h2>
+          <div class="muted" id="m_desc"></div>
+          <div class="sep"></div>
+          <div><span class="old" id="m_old"></span> <span class="price" id="m_price"></span></div>
+          <div class="install" id="m_install"></div>
+          <div class="actions">
+            <button class="btn" id="addBtn">Agregar al carrito</button>
+            <button class="btn ghost" onclick="toggleModal(false)">Seguir viendo</button>
+            <button class="btn wishlist" id="wishBtn">♡ Guardar</button>
+          </div>
+          <p class="hint">Retiro en 2 h | Envío a domicilio | 6 cuotas | Stock inmediato</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal login" id="loginModal" aria-hidden="true" role="dialog" aria-label="Ingresar a mi cuenta">
+    <div class="backdrop"></div>
+    <div class="sheet">
+      <button class="close-x" onclick="toggleLogin(false)" aria-label="Cerrar">✕</button>
+      <div class="body" style="padding:18px">
+        <h3 style="margin:0 0 8px">Ingresá a tu cuenta</h3>
+        <input class="input" id="inName" placeholder="Nombre y apellido" autocomplete="name" />
+        <input class="input" id="inEmail" placeholder="Email" type="email" autocomplete="email" />
+        <button class="btn" id="loginBtn" style="width:100%;margin-top:8px">Ingresar</button>
+        <p class="hint">Modo demo: guardamos tu nombre en tu navegador para saludarte y recordar tu sesión.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARRITO -->
+  <aside class="cart" id="cart" aria-label="Carrito">
+    <header><strong>Tu carrito</strong><button class="icon-btn" id="closeCart" aria-label="Cerrar carrito">✕</button></header>
+    <div class="items" id="cartItems"></div>
+    <div class="footer">
+      <div class="total"><span>Subtotal</span><span id="cartSubtotal">$0</span></div>
+      <div class="total"><span>Envío</span><span id="cartShip">A calcular</span></div>
+      <div class="total"><span>Total</span><span id="cartTotal">$0</span></div>
+      <button class="pay" id="payBtn">Pagar con Mercado Pago</button>
+      <div id="wallet_container" style="margin-top:10px"></div>
+      <div class="hint">*Modo prueba. Si no carga MP, se simula el pago.</div>
+    </div>
+  </aside>
+
+  <!-- TOAST + FAB -->
+  <div class="toast" id="toast" role="status" aria-live="polite">Agregado al carrito</div>
+  <button class="fab" onclick="alert('Abrir WhatsApp de atención (demo)')">💬 WhatsApp</button>
+
+  <script src="app.js"></script>
+
+  <!-- ZOOM OVERLAY -->
+  <div id="zoomOverlay" class="zoom hidden" aria-hidden="true">
+    <div class="zoom-toolbar">
+      <button id="zoomOut">−</button>
+      <button id="zoomIn">+</button>
+      <button id="zoomClose">✕</button>
+    </div>
+    <img id="zoomImg" alt="Zoom producto" />
+  </div>
+
+</body>
+</html>
